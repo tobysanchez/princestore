@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="../css/global.css" />
+    <link rel="stylesheet" href="../css/header.css" />
+    <link rel="stylesheet" href="../css/footer.css" />
+    <link rel="stylesheet" href="../css/cart.css">
+    <link
+      rel="shortcut icon"
+      href="./imges/square-web-awesome-brands-solid.svg"
+      type="image/x-icon"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+      integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <title>Cart Page</title>
+  
+  </head>
+
+  <body
+    style="
+      height: 100vh;
+      display: grid;
+      align-items: center;
+      grid-template-rows: auto 1fr auto;">
+
+
+
+    <header class="flex">
+      <a href="/index.html" class="logo"
+        ><i class="fa-solid fa-crown"></i>
+        <span style="font-weight: bold">PRINCE</span>
+        <p style="letter-spacing: 3.5px">STORE</p>
+      </a>
+      <div class="links">
+        <!-- <a class="search" href=""><i class="fa-solid fa-magnifying-glass"></i>      Search</a> -->
+      </div>
+      <div class="links">
+        <a style="position: relative" class="cart" href="">
+          <i class="fa-solid fa-cart-shopping"></i> $0.00
+          <span class="products-number">3</span>
+        </a>
+        <a class="sign-in" href="">
+          <i class="fa-solid fa-right-to-bracket"></i> Sign-in</a
+        >
+        <a class="register" href="">
+          <i class="fa-solid fa-user-plus"></i> Register</a
+        >
+      </div>
+    </header>
+
+    <main style="text-align: center" class=" ">
+      <section class="cart ">
+        <article class="product flex">
+          <button>
+            <i class="fa-solid fa-trash"></i>
+          </button>
+
+          <p class="price">$199</p>
+
+          <div class="flex" style="margin-right: 1rem">
+            <button class="decrease">-</button>
+            <div class="quantity flex">3</div>
+            <button class="increase">+</button>
+          </div>
+
+          <p class="title">Product Title</p>
+
+          <img
+            style="border-radius: 0.22rem"
+            width="70"
+            height="70"
+            src="/imges/img-loader (4).webp"
+            alt=""
+          />
+        </article>
+      </section>
+
+
+      <section class="cart ">
+        <article class="product flex">
+          <button>
+            <i class="fa-solid fa-trash"></i>
+          </button>
+
+          <p class="price">$199</p>
+
+          <div class="flex" style="margin-right: 1rem">
+            <button class="decrease">-</button>
+            <div class="quantity flex">3</div>
+            <button class="increase">+</button>
+          </div>
+
+          <p class="title">Product Title</p>
+
+          <img
+            style="border-radius: 0.22rem"
+            width="70"
+            height="70"
+            src="/imges/img-loader (3).webp "
+            alt=""
+          />
+        </article>
+      </section>
+
+
+      <section class="cart ">
+        <article class="product flex">
+          <button>
+            <i class="fa-solid fa-trash"></i>
+          </button>
+
+          <p class="price">$199</p>
+
+          <div class="flex" style="margin-right: 1rem">
+            <button class="decrease">-</button>
+            <div class="quantity flex">3</div>
+            <button class="increase">+</button>
+          </div>
+
+          <p class="title">Product Title</p>
+
+          <img
+            style="border-radius: 0.22rem"
+            width="70"
+            height="70"
+            src="/imges/img-loader (1).webp"
+            alt=""
+          />
+        </article>
+      </section>
+
+      <button class="clear">
+      <i style="color: white; margin-right: 0.2rem;" 
+      class="fa-solid fa-trash"></i>Clear Cart</button>
+      <section class="summary border">
+      <h1>Cart Summary</h1>
+     <div class="flex">
+       <p class="subtotal">Subtotal</p>
+       <p> 597.99</p>
+     </div>
+      <button disabled class="checkout">CHECKOUT</button>
+    <a href="../pages/sigin.html">Please Sign in to countinue</a>  
+    
+    </section>
+    </main>
+
+
+    
+
+    <footer>
+      All rights reserved
+      <span> Koear.dev & Prince Ali </span>
+      <i class="fa-solid fa-copyright"></i>
+      2025.
+    </footer>
+  </body>
+</html>

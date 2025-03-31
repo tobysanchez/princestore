@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>طلب USDT</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    <script src="../js/telegramBot.js" defer></script>
+    <script src="../js/calculateTotal.js" defer></script>
+    <style>
+        * {
+            font-family: 'Cairo', sans-serif;
+            direction: rtl;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: url('../imges/crypto_background.jpg') no-repeat center center fixed;
+            background-size: cover;
+            color: #fff;
+            text-align: center;
+        }
+
+        header {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            font-size: 24px;
+            font-weight: bold;
+            color: #A2FF00;
+        }
+
+        .order-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 30px;
+        }
+
+        .order-form {
+            margin-top: 20px;
+            background: linear-gradient(135deg, #6a0dad, #32cd32);
+            padding: 20px;
+            border-radius: 10px;
+            width: 80%;
+            max-width: 500px;
+            color: white;
+            font-weight: bold;
+        }
+
+        input,
+        select,
+        button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            border: none;
+            border-radius: 5px;
+        }
+
+        button {
+            background: #6a0dad;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background: #32cd32;
+        }
+
+        .disclaimer {
+            margin-top: 20px;
+            font-size: 14px;
+            color: red;
+            font-weight: bold;
+        }
+
+        .exchange-rates {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #32cd32;
+            color: black;
+            border-radius: 10px;
+            width: 80%;
+            max-width: 500px;
+            font-weight: bold;
+            margin-left: auto;
+            margin-right: auto;
+            text-align: center;
+        }
+
+        footer {
+            margin-top: 30px;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .auto-calculate {
+            color: #A2FF00;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .order-number {
+            background-color: #6a0dad;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .g-recaptcha {
+            display: flex;
+            justify-content: center;
+            margin: 15px 0;
+        }
+
+        #submitBtn {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="logo">
+            <img src="../imges/tether.svg" alt="Tether Logo" style="width: 50px; height: auto;">
+            <div>
+                <span style="font-weight: bold">USDT Exchange</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- أسعار الصرف -->
+    <section class="exchange-rates">
+        <h3>أسعار الصرف</h3>
+        <p>دولار شراء مقابل سوداني: <span id="rate-buy-sdg">...</span> </p>
+        <p>دولار بيع مقابل سوداني: <span id="rate-sell-sdg">...</span> </p>
+        <p>دولار شراء مقابل مصر: <span id="rate-buy-egp">...</span> </p>
+        <p>دولار بيع مقابل مصر: <span id="rate-sell-egp">...</span> </p>
+    </section>
+
+    <main>
+        <section class="order-section">
+            <div class="order-form">
+                <h2 style="color: #fff;">املأ بياناتك لإتمام الطلب</h2>
+
+                <!-- عرض رقم الطلب العشوائي -->
+                <div class="order-number">
+                    رقم الطلب: <span id="orderId"></span>
+                </div>
+
+                <form id="orderForm">
+                    <label>الاسم: <input type="text" name="name" id="name" required></label>
+                    <label>رقم الهاتف: <input type="tel" name="phone" id="phone" required></label>
+
+                    <!-- نوع المحفظة -->
+                    <label>نوع المحفظة:
+                        <select name="wallet-type" id="wallet-type" required onchange="toggleWalletFields()">
+                            <option value="">-- اختر نوع المحفظة --</option>
+                            <option value="centralized">محفظة مركزية</option>
+                            <option value="decentralized">محفظة لا مركزية</option>
+                        </select>
+                    </label>
+
+                    <!-- حقول المحفظة المركزية -->
+                    <div id="centralized-fields" class="hidden">
+                        <label>اسم المحفظة المركزية:
+                            <select name="centralized-wallet" id="centralized-wallet">
+                                <option value="binance">باينانس (Binance)</option>
+                                <option value="coinbase">كوين بيز (Coinbase)</option>
+                                <option value="kraken">كراكن (Kraken)</option>
+                                <option value="huobi">هوبي (Huobi)</option>
+                                <option value="okx">OKX</option>
+                                <option value="bybit">بايت (Bybit)</option>
+                                <option value="kucoin">كوكوين (KuCoin)</option>
+                                <option value="bitfinex">بتفينكس (Bitfinex)</option>
+                                <option value="gateio">Gate.io</option>
+                                <option value="crypto">كريبتو دوت كوم (Crypto.com)</option>
+                                <option value="other">أخرى</option>
+                            </select>
+                        </label>
+                        <div id="other-centralized-container" class="hidden">
+                            <label>اسم المحفظة الأخرى: <input type="text" name="other-centralized"
+                                    id="other-centralized"></label>
+                        </div>
+                        <label>رقم الحساب أو الإيميل: <input type="text" name="centralized-account"
+                                id="centralized-account"></label>
+                    </div>
+
+                    <!-- حقول المحفظة اللا مركزية -->
+                    <div id="decentralized-fields" class="hidden">
+                        <label>شبكة التحويل:
+                            <select name="network-type" id="network-type">
+                                <option value="tron">TRON (TRC20)</option>
+                                <option value="ethereum">Ethereum (ERC20)</option>
+                                <option value="binance-smart-chain">Binance Smart Chain (BEP20)</option>
+                                <option value="solana">Solana</option>
+                                <option value="polygon">Polygon</option>
+                                <option value="avalanche">Avalanche</option>
+                                <option value="arbitrum">Arbitrum</option>
+                                <option value="optimism">Optimism</option>
+                                <option value="fantom">Fantom</option>
+                                <option value="other">أخرى</option>
+                            </select>
+                        </label>
+                        <div id="other-network-container" class="hidden">
+                            <label>اسم الشبكة الأخرى: <input type="text" name="other-network"
+                                    id="other-network"></label>
+                        </div>
+                        <label>عنوان المحفظة (USDT): <input type="text" name="wallet-address"
+                                id="wallet-address"></label>
+                        <p style="color: #ffcc00; margin-top: 10px;">رسوم المعاملة على العميل</p>
+                    </div>
+
+                    <label>عملة الدفع :
+                        <select name="transaction-type" id="transaction-type" onchange="calculateTotal()">
+                            <option value="buy">شراء</option>
+                            <option value="sell">بيع</option>
+                        </select>
+                    </label>
+                    <label>العملة:
+                        <select name="currency" id="currency" onchange="calculateTotal()">
+                            <option value="sdg">جنيه سوداني</option>
+                            <option value="egp">جنيه مصري</option>
+                        </select>
+                    </label>
+                    <label>المبلغ المطلوب (USDT): <input type="number" name="amount" id="amount"
+                            oninput="calculateTotal()" required></label>
+                    <p class="auto-calculate">سيتم حساب الفاتوره تلقائيًا </p>
+                    <p>المبلغ الإجمالي: <span id="total-price">0.00</span> <span id="currency-symbol">جنيه سوداني</span>
+                    </p>
+
+                    <!-- إضافة reCAPTCHA -->
+                    <div class="g-recaptcha" data-sitekey="6Lfz_gQrAAAAAHdaCqyJuM_ZXalO6Fgg8OrZyKBG"
+                        data-callback="enableSubmit"></div>
+
+                    <button type="submit" id="submitBtn" disabled>إرسال الطلب</button>
+                </form>
+                <p class="disclaimer">⚠️ نحن غير مسؤولين عن أي خطأ في إدخال البيانات، الرجاء التأكد قبل الإرسال.</p>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        جميع الحقوق محفوظة
+        <span>CryptoExchange</span>
+        <i class="fa-solid fa-copyright"></i>
+        2025.
+    </footer>
+
+    <script>
+        // توليد رقم طلب عشوائي عند تحميل الصفحة
+        document.addEventListener('DOMContentLoaded', function () {
+            generateOrderId();
+        });
+
+        function generateOrderId() {
+            // تاريخ اليوم + 6 أرقام عشوائية
+            const today = new Date();
+            const datePart = today.getFullYear().toString().substr(-2) +
+                (today.getMonth() + 1).toString().padStart(2, '0') +
+                today.getDate().toString().padStart(2, '0');
+            const randomPart = Math.floor(100000 + Math.random() * 900000);
+            const orderId = datePart + randomPart;
+
+            document.getElementById('orderId').textContent = orderId;
+
+            // يمكنك حفظ رقم الطلب في localStorage إذا احتجت إليه لاحقًا
+            localStorage.setItem('currentOrderId', orderId);
+        }
+
+        // تحميل أسعار الصرف
+        fetch('../data/exchangeRates.json')
+            .then(response => response.json())
+            .then(data => {
+                // عرض أسعار الصرف
+                document.getElementById('rate-buy-sdg').textContent = data.usd_to_sdg.buy + ' ج ';
+                document.getElementById('rate-sell-sdg').textContent = data.usd_to_sdg.sell + '  ج ';
+                document.getElementById('rate-buy-egp').textContent = data.usd_to_egp.buy + 'ج  ';
+                document.getElementById('rate-sell-egp').textContent = data.usd_to_egp.sell + 'ج  ';
+
+                // حفظ الأسعار في localStorage لاستخدامها لاحقًا
+                localStorage.setItem('exchangeRates', JSON.stringify(data));
+            })
+            .catch(error => console.error('Error loading exchange rates:', error));
+
+        function toggleWalletFields() {
+            const walletType = document.getElementById('wallet-type').value;
+            const centralizedFields = document.getElementById('centralized-fields');
+            const decentralizedFields = document.getElementById('decentralized-fields');
+
+            // إخفاء جميع الحقول أولاً
+            centralizedFields.classList.add('hidden');
+            decentralizedFields.classList.add('hidden');
+
+            // إظهار الحقول المناسبة بناءً على الاختيار
+            if (walletType === 'centralized') {
+                centralizedFields.classList.remove('hidden');
+                document.getElementById('wallet-address').removeAttribute('required');
+                document.getElementById('centralized-account').setAttribute('required', '');
+            } else if (walletType === 'decentralized') {
+                decentralizedFields.classList.remove('hidden');
+                document.getElementById('centralized-account').removeAttribute('required');
+                document.getElementById('wallet-address').setAttribute('required', '');
+            }
+        }
+
+        // إضافة event listeners للخيارات "أخرى"
+        document.getElementById('centralized-wallet').addEventListener('change', function () {
+            const otherContainer = document.getElementById('other-centralized-container');
+            if (this.value === 'other') {
+                otherContainer.classList.remove('hidden');
+                document.getElementById('other-centralized').setAttribute('required', '');
+            } else {
+                otherContainer.classList.add('hidden');
+                document.getElementById('other-centralized').removeAttribute('required');
+            }
+        });
+
+        document.getElementById('network-type').addEventListener('change', function () {
+            const otherContainer = document.getElementById('other-network-container');
+            if (this.value === 'other') {
+                otherContainer.classList.remove('hidden');
+                document.getElementById('other-network').setAttribute('required', '');
+            } else {
+                otherContainer.classList.add('hidden');
+                document.getElementById('other-network').removeAttribute('required');
+            }
+        });
+
+        // تحديث رمز العملة عند تغيير العملة
+        document.getElementById('currency').addEventListener('change', function () {
+            const currencySymbol = document.getElementById('currency-symbol');
+            currencySymbol.textContent = this.value === 'sdg' ? 'جنيه سوداني' : 'جنيه مصري';
+        });
+
+        // تفعيل زر الإرسال بعد التحقق من reCAPTCHA
+        function enableSubmit() {
+            document.getElementById('submitBtn').disabled = false;
+            document.getElementById('submitBtn').style.display = 'block';
+        }
+
+        // معالجة إرسال النموذج
+        document.getElementById('orderForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            // التحقق من reCAPTCHA
+            const response = grecaptcha.getResponse();
+            if (response.length == 0) {
+                alert('الرجاء التحقق من أنك لست روبوت');
+                return false;
+            }
+
+            // هنا يمكنك إضافة كود إرسال البيانات إلى الخادم
+            alert('تم إرسال طلبك بنجاح! رقم الطلب: ' + document.getElementById('orderId').textContent);
+
+            // إعادة تحميل الصفحة لإنشاء طلب جديد
+            setTimeout(function () {
+                location.reload();
+            }, 3000);
+        });
+    </script>
+</body>
+
+</html>
